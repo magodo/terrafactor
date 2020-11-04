@@ -5,13 +5,13 @@ import (
 	"os"
 )
 
-func Refactor(rootModuleAbsPath string,  sourceAddr []string, destAddr []string, currentModuleAbsPath string) error {
+func Refactor(rootModuleAbsPath string, sourceAddr []string, destAddr []string, currentModuleAbsPath string) error {
 	// We have to chdir here because otherwise the loader.LoadConfig will fail during looking up
 	// the module based on its manifest record, where the path is recorded in a relative manner.
 	if err := os.Chdir(rootModuleAbsPath); err != nil {
 		return err
 	}
-	moduleConfigs,err := NewModuleConfigs(rootModuleAbsPath)
+	moduleConfigs, err := NewModuleConfigs(rootModuleAbsPath)
 	if err != nil {
 		return err
 	}
@@ -72,7 +72,7 @@ func Refactor(rootModuleAbsPath string,  sourceAddr []string, destAddr []string,
 
 	// write back the module sources
 	for f, b := range moduleSources {
-		if err := ioutil.WriteFile(f, b, 0644); err  != nil {
+		if err := ioutil.WriteFile(f, b, 0644); err != nil {
 			return err
 		}
 	}

@@ -3,10 +3,11 @@ package pkg
 // Referred from terraform/configs/configupgrade/module_sources.go
 
 import (
-	"github.com/hashicorp/terraform/configs"
 	"io/ioutil"
 	"path/filepath"
 	"strings"
+
+	"github.com/hashicorp/terraform/configs"
 )
 
 type ModuleSources map[string][]byte

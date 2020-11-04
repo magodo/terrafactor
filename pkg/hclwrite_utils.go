@@ -10,4 +10,3 @@ func RenameVariablePrefixInBody(body *hclwrite.Body, sourceAddrs []string, destA
 		RenameVariablePrefixInBody(blk.Body(), sourceAddrs, destAddrs)
 	}
 }
-

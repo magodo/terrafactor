@@ -3,6 +3,7 @@ package pkg
 import (
 	"errors"
 	"fmt"
+
 	"github.com/hashicorp/hcl/v2"
 	"github.com/hashicorp/hcl/v2/hclwrite"
 )
@@ -23,7 +24,7 @@ func RefactorLabelInModule(mc *ModuleConfigs, blockType string, oldLabels, newLa
 			return nil, errors.New(diags.Error())
 		}
 
-		blockLoop:
+	blockLoop:
 		for _, blk := range file.Body().Blocks() {
 			thisLabels := blk.Labels()
 			for idx := range oldLabels {
@@ -53,7 +54,7 @@ func RefactorLabelInModule(mc *ModuleConfigs, blockType string, oldLabels, newLa
 		newAddr[0] = blockType
 		copy(newAddr[1:], newLabels)
 
-		RenameVariablePrefixInBody(file.Body(),oldAddr ,newAddr)
+		RenameVariablePrefixInBody(file.Body(), oldAddr, newAddr)
 
 		moduleSources[filename] = file.Bytes()
 	}

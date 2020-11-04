@@ -4,7 +4,7 @@ import "strings"
 
 func RefactorDataSourceType(mc *ModuleConfigs, oldType, newType, currentModuleAbsPath string) (ModuleSources, error) {
 	return RefactorLabelInModule(mc, "data", []string{oldType}, []string{newType}, currentModuleAbsPath,
-		func(mc *ModuleConfigs, label []string ) []string {
+		func(mc *ModuleConfigs, label []string) []string {
 			files := []string{}
 			for addr, ds := range mc.Get(currentModuleAbsPath).DataResources {
 				addrs := strings.Split(addr, ".")
@@ -13,5 +13,12 @@ func RefactorDataSourceType(mc *ModuleConfigs, oldType, newType, currentModuleAb
 				}
 			}
 			return files
+		})
+}
+
+func RefactorDataSourceName(mc *ModuleConfigs, dsType, oldName, newName, currentModuleAbsPath string) (ModuleSources, error) {
+	return RefactorLabelInModule(mc, "data", []string{dsType, oldName}, []string{dsType, newName}, currentModuleAbsPath,
+		func(mc *ModuleConfigs, label []string) []string {
+			return []string{mc.Get(currentModuleAbsPath).DataResources["data."+strings.Join(label, ".")].DeclRange.Filename}
 		})
 }

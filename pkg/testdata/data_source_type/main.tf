@@ -1,5 +1,5 @@
 
-data "foo" "name1" {
+data "type1" "name" {
   name = "bar"
 }
 

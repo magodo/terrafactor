@@ -3,10 +3,11 @@ package pkg
 import (
 	"errors"
 	"fmt"
-	"github.com/hashicorp/terraform/configs"
-	"github.com/hashicorp/terraform/configs/configload"
 	"path/filepath"
 	"strings"
+
+	"github.com/hashicorp/terraform/configs"
+	"github.com/hashicorp/terraform/configs/configload"
 )
 
 type ModuleConfigs struct {
@@ -15,7 +16,7 @@ type ModuleConfigs struct {
 	configs           map[string]*configs.Module // key: abs path to the module; value: the module's config
 }
 
-func NewModuleConfigs( path string) (*ModuleConfigs,error) {
+func NewModuleConfigs(path string) (*ModuleConfigs, error) {
 	loader, err := configload.NewLoader(&configload.Config{
 		ModulesDir: filepath.Join(path, ".terraform", "modules"),
 	})
@@ -65,7 +66,6 @@ func isLocalModulePath(path string) bool {
 	return strings.HasPrefix(path, "./") || strings.HasPrefix(path, "../")
 }
 
-
 func (mc ModuleConfigs) Get(modpath string) *configs.Module {
 	mod := mc.configs[modpath]
 	if mod == nil {
@@ -73,5 +73,3 @@ func (mc ModuleConfigs) Get(modpath string) *configs.Module {
 	}
 	return mod
 }
-
-
