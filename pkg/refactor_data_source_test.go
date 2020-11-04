@@ -29,10 +29,6 @@ func TestRefactorDataSourceType(t *testing.T) {
 data "type2" "name" {
   name = "bar"
 }
-
-module "mod1" {
-  source = "./mod1"
-}
 `),
 				filepath.Join(testdataDir, "data_source_type", "main2.tf"): []byte(`
 data "typex" "name" {
@@ -75,10 +71,6 @@ func TestRefactorDataSourceName(t *testing.T) {
 				filepath.Join(testdataDir, "data_source_name", "main.tf"): []byte(`
 data "foo" "name2" {
   name = "bar"
-}
-
-module "mod1" {
-  source = "./mod1"
 }
 `),
 				filepath.Join(testdataDir, "data_source_name", "main2.tf"): []byte(`
