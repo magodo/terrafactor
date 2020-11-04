@@ -1,2 +1,2 @@
 .idea
-testdata/tf-config
+pkg/testdata/tf-config

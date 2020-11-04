@@ -76,13 +76,16 @@ func main() {
 		log.Fatal(diags.Error())
 	}
 
-	destAddr, err := convertTraversal(destTraversal)
+	destAttrs, err := convertTraversal(destTraversal)
 	if err != nil {
 		log.Fatal(err)
 	}
-	if len(destAddr) != 1 {
+	if len(destAttrs) != 1 {
 		log.Fatalf("the destination address %q should only contain the one segment (the last segment)", *flagDestAttr)
 	}
+	destAddr := make([]string, len(sourceAddr))
+	copy(destAddr, sourceAddr)
+	destAddr[len(destAddr)-1] = destAttrs[0]
 
 	if err := pkg.Refactor(rootModuleAbsPath, sourceAddr, destAddr, currentModuleAbsPath); err != nil {
 		log.Fatal(err)
