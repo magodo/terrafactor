@@ -26,6 +26,9 @@ func RefactorLabelInModule(mc *ModuleConfigs, blockType string, oldLabels, newLa
 
 	blockLoop:
 		for _, blk := range file.Body().Blocks() {
+			if blk.Type() != blockType {
+				continue
+			}
 			thisLabels := blk.Labels()
 			for idx := range oldLabels {
 				if thisLabels[idx] != oldLabels[idx] {

@@ -21,8 +21,8 @@ var (
 func init() {
 	flagRootModulePath = flag.String("root-module-path", "", "path to root module")
 	flagCurrentModulePath = flag.String("module-path", "", "path to the current module")
-	flagSourceAddr = flag.String("source-attr", "", "the source attribute resides in the current module that is to be renamed")
-	flagDestAttr = flag.String("dest-addr", "", "the destination attribute to rename to")
+	flagSourceAddr = flag.String("source-addr", "", "the source attribute address resides in the current module that is to refactor")
+	flagDestAttr = flag.String("dest-attr", "", "the destination attribute to rename to")
 }
 
 // convertTraversal converts the traversal into string slice.
