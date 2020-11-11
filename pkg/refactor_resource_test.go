@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestRefactorDataSourceType(t *testing.T) {
+func TestRefactorResourceType(t *testing.T) {
 	cwd, _ := os.Getwd()
 	defer os.Chdir(cwd)
 	testdataDir, _ := filepath.Abs(filepath.Join(cwd, "testdata"))
@@ -21,18 +21,18 @@ func TestRefactorDataSourceType(t *testing.T) {
 	}{
 		{
 			name:           "basic",
-			rootModulePath: filepath.Join(testdataDir, "data_source_type"),
+			rootModulePath: filepath.Join(testdataDir, "resource_type"),
 			oldType:        "type1",
 			newType:        "type2",
 			expect: map[string][]byte{
-				filepath.Join(testdataDir, "data_source_type", "main.tf"): []byte(`
-data "type2" "a" {
+				filepath.Join(testdataDir, "resource_type", "main.tf"): []byte(`
+resource "type2" "a" {
   name = "bar"
 }
 `),
-				filepath.Join(testdataDir, "data_source_type", "main2.tf"): []byte(`
-data "typex" "a" {
-  name = data.type2.a.name
+				filepath.Join(testdataDir, "resource_type", "main2.tf"): []byte(`
+resource "typex" "a" {
+  name = type2.a.name
 }
 `),
 			},
@@ -43,39 +43,39 @@ data "typex" "a" {
 		require.NoError(t, os.Chdir(c.rootModulePath), c.name)
 		moduleConfigs, err := NewModuleConfigs(c.rootModulePath)
 		require.NoError(t, err, c.name)
-		moduleSources, err := RefactorDataSourceType(moduleConfigs, c.oldType, c.newType, c.rootModulePath)
+		moduleSources, err := RefactorResourceType(moduleConfigs, c.oldType, c.newType, c.rootModulePath)
 		require.NoError(t, err, c.name)
 		require.Equal(t, c.expect, moduleSources, c.name)
 	}
 }
 
-func TestRefactorDataSourceName(t *testing.T) {
+func TestRefactorResourceName(t *testing.T) {
 	cwd, _ := os.Getwd()
 	defer os.Chdir(cwd)
 	testdataDir, _ := filepath.Abs(filepath.Join(cwd, "testdata"))
 	cases := []struct {
 		name           string
 		rootModulePath string
-		dsType         string
+		resType        string
 		oldName        string
 		newName        string
 		expect         ModuleSources
 	}{
 		{
 			name:           "basic",
-			rootModulePath: filepath.Join(testdataDir, "data_source_name"),
-			dsType:         "foo",
+			rootModulePath: filepath.Join(testdataDir, "resource_name"),
+			resType:        "foo",
 			oldName:        "name1",
 			newName:        "name2",
 			expect: map[string][]byte{
-				filepath.Join(testdataDir, "data_source_name", "main.tf"): []byte(`
-data "foo" "name2" {
+				filepath.Join(testdataDir, "resource_name", "main.tf"): []byte(`
+resource "foo" "name2" {
   name = "bar"
 }
 `),
-				filepath.Join(testdataDir, "data_source_name", "main2.tf"): []byte(`
-data "foo" "namex" {
-  name = data.foo.name2.name
+				filepath.Join(testdataDir, "resource_name", "main2.tf"): []byte(`
+resource "foo" "namex" {
+  name = foo.name2.name
 }
 `),
 			},
@@ -86,7 +86,7 @@ data "foo" "namex" {
 		require.NoError(t, os.Chdir(c.rootModulePath), c.name)
 		moduleConfigs, err := NewModuleConfigs(c.rootModulePath)
 		require.NoError(t, err, c.name)
-		moduleSources, err := RefactorDataSourceName(moduleConfigs, c.dsType, c.oldName, c.newName, c.rootModulePath)
+		moduleSources, err := RefactorResourceName(moduleConfigs, c.resType, c.oldName, c.newName, c.rootModulePath)
 		require.NoError(t, err, c.name)
 		require.Equal(t, c.expect, moduleSources, c.name)
 	}

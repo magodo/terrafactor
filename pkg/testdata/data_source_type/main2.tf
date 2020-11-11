@@ -1,4 +1,4 @@
 
-data "typex" "name" {
-  name = data.type1.name
+data "typex" "a" {
+  name = data.type1.a.name
 }

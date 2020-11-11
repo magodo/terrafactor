@@ -1,4 +1,4 @@
 
-data "type1" "name" {
+data "type1" "a" {
   name = "bar"
 }

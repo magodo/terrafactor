@@ -46,7 +46,7 @@ func NewModuleConfigs(path string) (*ModuleConfigs, error) {
 // addChildModules recursively adds the child modules of the provided module to fill in the moduleConfigs passed in.
 func addChildModules(cfg *configs.Config, path string, moduleConfigs map[string]*configs.Module) {
 	for _, childMod := range cfg.Children {
-		// We skip all module sources except local paths
+		// We only keep module sources that are local paths
 		if !isLocalModulePath(childMod.SourceAddr) {
 			continue
 		}

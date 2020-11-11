@@ -10,7 +10,7 @@ import (
 
 type locateDeclarationFunc func(configs *ModuleConfigs, label []string) []string
 
-func RefactorLabelInModule(mc *ModuleConfigs, blockType string, oldLabels, newLabels []string, currentModuleAbsPath string, f locateDeclarationFunc) (ModuleSources, error) {
+func RefactorLabelInModule(mc *ModuleConfigs, defTypeId, refTypeId string, oldLabels, newLabels []string, currentModuleAbsPath string, f locateDeclarationFunc) (ModuleSources, error) {
 	moduleSources, err := LoadModule(currentModuleAbsPath)
 	if err != nil {
 		return nil, err
@@ -26,7 +26,7 @@ func RefactorLabelInModule(mc *ModuleConfigs, blockType string, oldLabels, newLa
 
 	blockLoop:
 		for _, blk := range file.Body().Blocks() {
-			if blk.Type() != blockType {
+			if blk.Type() != defTypeId {
 				continue
 			}
 			thisLabels := blk.Labels()
@@ -38,7 +38,7 @@ func RefactorLabelInModule(mc *ModuleConfigs, blockType string, oldLabels, newLa
 			thisNewLabels := make([]string, len(thisLabels))
 			copy(thisNewLabels, thisLabels)
 			copy(thisNewLabels, newLabels)
-			file.Body().FirstMatchingBlock(blockType, thisLabels).SetLabels(thisNewLabels)
+			file.Body().FirstMatchingBlock(defTypeId, thisLabels).SetLabels(thisNewLabels)
 			moduleSources[defFile] = file.Bytes()
 		}
 	}
@@ -49,13 +49,17 @@ func RefactorLabelInModule(mc *ModuleConfigs, blockType string, oldLabels, newLa
 		if len(diags) != 0 {
 			return nil, fmt.Errorf("failed to parse config for %s: %v", filename, diags.Error())
 		}
-		oldAddr := make([]string, len(oldLabels)+1)
-		oldAddr[0] = blockType
-		copy(oldAddr[1:], oldLabels)
+		oldAddr, newAddr := oldLabels, newLabels
 
-		newAddr := make([]string, len(newLabels)+1)
-		newAddr[0] = blockType
-		copy(newAddr[1:], newLabels)
+		if refTypeId != "" {
+			oldAddr = make([]string, len(oldLabels)+1)
+			oldAddr[0] = refTypeId
+			copy(oldAddr[1:], oldLabels)
+
+			newAddr = make([]string, len(newLabels)+1)
+			newAddr[0] = refTypeId
+			copy(newAddr[1:], newLabels)
+		}
 
 		RenameVariablePrefixInBody(file.Body(), oldAddr, newAddr)
 
