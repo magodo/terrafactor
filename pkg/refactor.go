@@ -36,8 +36,7 @@ func Refactor(rootModuleAbsPath string, sourceAddr []string, destAddr []string, 
 		case 3:
 			moduleSources, err = RefactorDataSourceName(moduleConfigs, sourceAddr[1], sourceAddr[2], destAddr[2], currentModuleAbsPath)
 		default:
-			panic("TODO")
-			//moduleSources, err = RefactorDataSourceAttribute(moduleConfigs, sourceAddr[1], sourceAddr[2:], destAddr[2:], currentModuleAbsPath)
+			moduleSources, err = RefactorDataSourceAttribute(moduleConfigs, sourceAddr[1], sourceAddr[2], sourceAddr[3:], destAddr[3:], currentModuleAbsPath)
 		}
 	case "var":
 		switch len(sourceAddr) {
@@ -67,7 +66,7 @@ func Refactor(rootModuleAbsPath string, sourceAddr []string, destAddr []string, 
 		case 2:
 			moduleSources, err = RefactorResourceName(moduleConfigs, sourceAddr[0], sourceAddr[1], destAddr[1], currentModuleAbsPath)
 		default:
-			panic("TODO: rename the resource attribute")
+			moduleSources, err = RefactorReourceAttribute(moduleConfigs, sourceAddr[1], sourceAddr[2], sourceAddr[3:], destAddr[3:], currentModuleAbsPath)
 		}
 	}
 

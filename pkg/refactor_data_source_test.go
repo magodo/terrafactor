@@ -91,3 +91,48 @@ data "foo" "namex" {
 		require.Equal(t, c.expect, moduleSources, c.name)
 	}
 }
+
+func TestRefactorDataSourceAttribute(t *testing.T) {
+	cwd, _ := os.Getwd()
+	defer os.Chdir(cwd)
+	testdataDir, _ := filepath.Abs(filepath.Join(cwd, "testdata"))
+	cases := []struct {
+		name           string
+		rootModulePath string
+		dsType         string
+		dsName         string
+		oldAddr        []string
+		newAddr        []string
+		expect         ModuleSources
+	}{
+		{
+			name:           "basic",
+			rootModulePath: filepath.Join(testdataDir, "data_source_attribute"),
+			dsType:         "foo",
+			dsName:         "a",
+			oldAddr:        []string{"addr1"},
+			newAddr:        []string{"addr2"},
+			expect: map[string][]byte{
+				filepath.Join(testdataDir, "data_source_attribute", "main.tf"): []byte(`
+data "foo" "a" {
+  addr2 = "x"
+}
+`),
+				filepath.Join(testdataDir, "data_source_attribute", "main2.tf"): []byte(`
+data "foo" "b" {
+  name = data.foo.a.addr2
+}
+`),
+			},
+		},
+	}
+
+	for _, c := range cases {
+		require.NoError(t, os.Chdir(c.rootModulePath), c.name)
+		moduleConfigs, err := NewModuleConfigs(c.rootModulePath)
+		require.NoError(t, err, c.name)
+		moduleSources, err := RefactorDataSourceAttribute(moduleConfigs, c.dsType, c.dsName, c.oldAddr, c.newAddr, c.rootModulePath)
+		require.NoError(t, err, c.name)
+		require.Equal(t, c.expect, moduleSources, c.name)
+	}
+}

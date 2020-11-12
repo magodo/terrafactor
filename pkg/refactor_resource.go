@@ -22,3 +22,16 @@ func RefactorResourceName(mc *ModuleConfigs, resType, oldName, newName, currentM
 			return []string{mc.Get(currentModuleAbsPath).ManagedResources[strings.Join(label, ".")].DeclRange.Filename}
 		})
 }
+
+func RefactorReourceAttribute(mc *ModuleConfigs, resType string, resName string, oldAddr, newAddr []string, currentModuleAbsPath string) (ModuleSources, error) {
+	oldAddrs := make([]string, len(oldAddr)+2)
+	newAddrs := make([]string, len(newAddr)+2)
+	oldAddrs[0], newAddrs[0] = resType, resType
+	oldAddrs[1], newAddrs[1] = resName, resName
+	copy(oldAddrs[2:], oldAddr)
+	copy(newAddrs[2:], newAddr)
+	return RefactorAttributeInModule(mc, "resource", "", oldAddrs, newAddrs, currentModuleAbsPath,
+		func(mc *ModuleConfigs, label []string) []string {
+			return []string{mc.Get(currentModuleAbsPath).ManagedResources[strings.Join(label, ".")].DeclRange.Filename}
+		})
+}
