@@ -1,4 +1,4 @@
 
 resource "foo" "b" {
-  name = foo.a.addr1
+  attr = foo.a.attr
 }

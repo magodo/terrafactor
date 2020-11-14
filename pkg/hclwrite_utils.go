@@ -14,6 +14,10 @@ func RenameVariablePrefixInBody(body *hclwrite.Body, sourceAddrs []string, destA
 	}
 }
 
+func RenameAttributeName(attr *hclwrite.Attribute, name string) {
+	attr.BuildTokens(nil)[0].Bytes = []byte(name)
+}
+
 func HclWriteBodyFindAllMatchingBlocks(b *hclwrite.Body, typeName string, labels []string) []*hclwrite.Block {
 	var blks []*hclwrite.Block
 

@@ -101,7 +101,7 @@ func RefactorAttributeInModule(mc *ModuleConfigs, defTypeId, refTypeId string, o
 		for _, topBlk := range topBlks {
 			candidateBlks := []*hclwrite.Block{topBlk}
 			for i, addr := range oldAttrs[:len(oldAttrs)-1] {
-				newCandidateBlks := []*hclwrite.Block{}
+				var newCandidateBlks []*hclwrite.Block
 				for _, candidateBlk := range candidateBlks {
 					for _, blk := range candidateBlk.Body().Blocks() {
 						if blk.Type() == addr {
@@ -122,14 +122,13 @@ func RefactorAttributeInModule(mc *ModuleConfigs, defTypeId, refTypeId string, o
 
 			for _, blk := range candidateBlks {
 				if attr, ok := blk.Body().Attributes()[lastAttr]; ok {
-					blk.Body().RemoveAttribute(lastAttr)
-					blk.Body().SetAttributeRaw(newAttr, attr.Expr().BuildTokens(nil))
+					RenameAttributeName(attr, newAttr)
 					continue
 				}
 
 				for _, blk := range blk.Body().Blocks() {
 					if blk.Type() == lastAttr {
-						blk.SetLabels([]string{newAttr})
+						blk.SetType(newAttr)
 					}
 				}
 			}
