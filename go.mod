@@ -7,3 +7,5 @@ require (
 	github.com/hashicorp/terraform v0.13.5
 	github.com/stretchr/testify v1.5.1
 )
+
+replace github.com/hashicorp/hcl/v2 => github.com/magodo/hcl/v2 v2.3.1-0.20201114120326-a62bb5d4aa4b

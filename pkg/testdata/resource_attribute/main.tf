@@ -4,16 +4,22 @@ resource "foo" "a" {
 
   block {
     attr = 123
-    nested_block {}
+    nested_block {
+      attr_nest = 1
+    }
   }
 
   multi_block {
-    attr1 = 1
-    nested_block {}
+    attr = 1
+    nested_block {
+      attr_nest = 1
+    }
   }
 
   multi_block {
-    attr2 = 2
-    nested_block {}
+    attr = 1
+    nested_block {
+      attr_nest = 1
+    }
   }
 }

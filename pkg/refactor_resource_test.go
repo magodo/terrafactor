@@ -120,23 +120,33 @@ resource "foo" "a" {
 
   block {
     attr = 123
-    nested_block {}
+    nested_block {
+      attr_nest = 1
+    }
   }
 
   multi_block {
-    attr1 = 1
-    nested_block {}
+    attr = 1
+    nested_block {
+      attr_nest = 1
+    }
   }
 
   multi_block {
-    attr2 = 2
-    nested_block {}
+    attr = 1
+    nested_block {
+      attr_nest = 1
+    }
   }
 }
 `),
 				filepath.Join(testdataDir, "resource_attribute", "main2.tf"): []byte(`
 resource "foo" "b" {
-  attr = foo.a.attr_new
+  attr                    = foo.a.attr_new
+  attr_block              = foo.a.block.0.attr
+  attr_block_nested       = foo.a.block.0.nested_block.0.attr_nest
+  attr_multi_block        = foo.a.multi_block.0.attr
+  attr_multi_block_nested = foo.a.multi_block.0.nested_block.attr_nest
 }
 `),
 			},
@@ -155,29 +165,39 @@ resource "foo" "a" {
 
   block_new {
     attr = 123
-    nested_block {}
+    nested_block {
+      attr_nest = 1
+    }
   }
 
   multi_block {
-    attr1 = 1
-    nested_block {}
+    attr = 1
+    nested_block {
+      attr_nest = 1
+    }
   }
 
   multi_block {
-    attr2 = 2
-    nested_block {}
+    attr = 1
+    nested_block {
+      attr_nest = 1
+    }
   }
 }
 `),
 				filepath.Join(testdataDir, "resource_attribute", "main2.tf"): []byte(`
 resource "foo" "b" {
-  attr = foo.a.attr
+  attr                    = foo.a.attr
+  attr_block              = foo.a.block_new.0.attr
+  attr_block_nested       = foo.a.block_new.0.nested_block.0.attr_nest
+  attr_multi_block        = foo.a.multi_block.0.attr
+  attr_multi_block_nested = foo.a.multi_block.0.nested_block.attr_nest
 }
 `),
 			},
 		},
 		{
-			name:           "rename top-level multiple blocks",
+			name:           "rename top-level multi block",
 			rootModulePath: filepath.Join(testdataDir, "resource_attribute"),
 			resType:        "foo",
 			resName:        "a",
@@ -190,34 +210,89 @@ resource "foo" "a" {
 
   block {
     attr = 123
-    nested_block {}
+    nested_block {
+      attr_nest = 1
+    }
   }
 
   multi_block_new {
-    attr1 = 1
-    nested_block {}
+    attr = 1
+    nested_block {
+      attr_nest = 1
+    }
   }
 
   multi_block_new {
-    attr2 = 2
-    nested_block {}
+    attr = 1
+    nested_block {
+      attr_nest = 1
+    }
   }
 }
 `),
 				filepath.Join(testdataDir, "resource_attribute", "main2.tf"): []byte(`
 resource "foo" "b" {
-  attr = foo.a.attr
+  attr                    = foo.a.attr
+  attr_block              = foo.a.block.0.attr
+  attr_block_nested       = foo.a.block.0.nested_block.0.attr_nest
+  attr_multi_block        = foo.a.multi_block_new.0.attr
+  attr_multi_block_nested = foo.a.multi_block_new.0.nested_block.attr_nest
 }
 `),
 			},
 		},
 		{
-			name:           "rename nested block in top-level multiple blocks",
+			name:           "rename top-level block attribute",
 			rootModulePath: filepath.Join(testdataDir, "resource_attribute"),
 			resType:        "foo",
 			resName:        "a",
-			oldAddr:        []string{"multi_block", "nested_block"},
-			newAddr:        []string{"multi_block", "nested_block_new"},
+			oldAddr:        []string{"block", "attr"},
+			newAddr:        []string{"block", "attr_new"},
+			expect: map[string][]byte{
+				filepath.Join(testdataDir, "resource_attribute", "main.tf"): []byte(`
+resource "foo" "a" {
+  attr = "x"
+
+  block {
+    attr_new = 123
+    nested_block {
+      attr_nest = 1
+    }
+  }
+
+  multi_block {
+    attr = 1
+    nested_block {
+      attr_nest = 1
+    }
+  }
+
+  multi_block {
+    attr = 1
+    nested_block {
+      attr_nest = 1
+    }
+  }
+}
+`),
+				filepath.Join(testdataDir, "resource_attribute", "main2.tf"): []byte(`
+resource "foo" "b" {
+  attr                    = foo.a.attr
+  attr_block              = foo.a.block.0.attr_new
+  attr_block_nested       = foo.a.block.0.nested_block.0.attr_nest
+  attr_multi_block        = foo.a.multi_block.0.attr
+  attr_multi_block_nested = foo.a.multi_block.0.nested_block.attr_nest
+}
+`),
+			},
+		},
+		{
+			name:           "rename top-level multi block nested block attr",
+			rootModulePath: filepath.Join(testdataDir, "resource_attribute"),
+			resType:        "foo",
+			resName:        "a",
+			oldAddr:        []string{"multi_block", "nested_block", "attr_nest"},
+			newAddr:        []string{"multi_block", "nested_block", "attr_nest_new"},
 			expect: map[string][]byte{
 				filepath.Join(testdataDir, "resource_attribute", "main.tf"): []byte(`
 resource "foo" "a" {
@@ -225,23 +300,33 @@ resource "foo" "a" {
 
   block {
     attr = 123
-    nested_block {}
+    nested_block {
+      attr_nest = 1
+    }
   }
 
   multi_block {
-    attr1 = 1
-    nested_block_new {}
+    attr = 1
+    nested_block {
+      attr_nest_new = 1
+    }
   }
 
   multi_block {
-    attr2 = 2
-    nested_block_new {}
+    attr = 1
+    nested_block {
+      attr_nest_new = 1
+    }
   }
 }
 `),
 				filepath.Join(testdataDir, "resource_attribute", "main2.tf"): []byte(`
 resource "foo" "b" {
-  attr = foo.a.attr
+  attr                    = foo.a.attr
+  attr_block              = foo.a.block.0.attr
+  attr_block_nested       = foo.a.block.0.nested_block.0.attr_nest
+  attr_multi_block        = foo.a.multi_block.0.attr
+  attr_multi_block_nested = foo.a.multi_block.0.nested_block.attr_nest_new
 }
 `),
 			},
