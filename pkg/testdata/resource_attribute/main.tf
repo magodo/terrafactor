@@ -23,3 +23,11 @@ resource "foo" "a" {
     }
   }
 }
+
+resource "foo" "b" {
+  attr = "x"
+
+  block {
+    attr = 123
+  }
+}

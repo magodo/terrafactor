@@ -139,14 +139,24 @@ resource "foo" "a" {
     }
   }
 }
+
+resource "foo" "b" {
+  attr = "x"
+
+  block {
+    attr = 123
+  }
+}
 `),
 				filepath.Join(testdataDir, "resource_attribute", "main2.tf"): []byte(`
-resource "foo" "b" {
+resource "bar" "c" {
   attr                    = foo.a.attr_new
   attr_block              = foo.a.block.0.attr
   attr_block_nested       = foo.a.block.0.nested_block.0.attr_nest
   attr_multi_block        = foo.a.multi_block.0.attr
   attr_multi_block_nested = foo.a.multi_block.0.nested_block.attr_nest
+  attr2                   = foo.b.attr
+  attr_block2             = foo.b.block.0.attr
 }
 `),
 			},
@@ -184,14 +194,24 @@ resource "foo" "a" {
     }
   }
 }
+
+resource "foo" "b" {
+  attr = "x"
+
+  block {
+    attr = 123
+  }
+}
 `),
 				filepath.Join(testdataDir, "resource_attribute", "main2.tf"): []byte(`
-resource "foo" "b" {
+resource "bar" "c" {
   attr                    = foo.a.attr
   attr_block              = foo.a.block_new.0.attr
   attr_block_nested       = foo.a.block_new.0.nested_block.0.attr_nest
   attr_multi_block        = foo.a.multi_block.0.attr
   attr_multi_block_nested = foo.a.multi_block.0.nested_block.attr_nest
+  attr2                   = foo.b.attr
+  attr_block2             = foo.b.block.0.attr
 }
 `),
 			},
@@ -229,14 +249,24 @@ resource "foo" "a" {
     }
   }
 }
+
+resource "foo" "b" {
+  attr = "x"
+
+  block {
+    attr = 123
+  }
+}
 `),
 				filepath.Join(testdataDir, "resource_attribute", "main2.tf"): []byte(`
-resource "foo" "b" {
+resource "bar" "c" {
   attr                    = foo.a.attr
   attr_block              = foo.a.block.0.attr
   attr_block_nested       = foo.a.block.0.nested_block.0.attr_nest
   attr_multi_block        = foo.a.multi_block_new.0.attr
   attr_multi_block_nested = foo.a.multi_block_new.0.nested_block.attr_nest
+  attr2                   = foo.b.attr
+  attr_block2             = foo.b.block.0.attr
 }
 `),
 			},
@@ -274,14 +304,24 @@ resource "foo" "a" {
     }
   }
 }
+
+resource "foo" "b" {
+  attr = "x"
+
+  block {
+    attr = 123
+  }
+}
 `),
 				filepath.Join(testdataDir, "resource_attribute", "main2.tf"): []byte(`
-resource "foo" "b" {
+resource "bar" "c" {
   attr                    = foo.a.attr
   attr_block              = foo.a.block.0.attr_new
   attr_block_nested       = foo.a.block.0.nested_block.0.attr_nest
   attr_multi_block        = foo.a.multi_block.0.attr
   attr_multi_block_nested = foo.a.multi_block.0.nested_block.attr_nest
+  attr2                   = foo.b.attr
+  attr_block2             = foo.b.block.0.attr
 }
 `),
 			},
@@ -319,14 +359,189 @@ resource "foo" "a" {
     }
   }
 }
+
+resource "foo" "b" {
+  attr = "x"
+
+  block {
+    attr = 123
+  }
+}
 `),
 				filepath.Join(testdataDir, "resource_attribute", "main2.tf"): []byte(`
-resource "foo" "b" {
+resource "bar" "c" {
   attr                    = foo.a.attr
   attr_block              = foo.a.block.0.attr
   attr_block_nested       = foo.a.block.0.nested_block.0.attr_nest
   attr_multi_block        = foo.a.multi_block.0.attr
   attr_multi_block_nested = foo.a.multi_block.0.nested_block.attr_nest_new
+  attr2                   = foo.b.attr
+  attr_block2             = foo.b.block.0.attr
+}
+`),
+			},
+		},
+		{
+			name:           "rename top-level attribute regardless resource name",
+			rootModulePath: filepath.Join(testdataDir, "resource_attribute"),
+			resType:        "foo",
+			resName:        "*",
+			oldAddr:        []string{"attr"},
+			newAddr:        []string{"attr_new"},
+			expect: map[string][]byte{
+				filepath.Join(testdataDir, "resource_attribute", "main.tf"): []byte(`
+resource "foo" "a" {
+  attr_new = "x"
+
+  block {
+    attr = 123
+    nested_block {
+      attr_nest = 1
+    }
+  }
+
+  multi_block {
+    attr = 1
+    nested_block {
+      attr_nest = 1
+    }
+  }
+
+  multi_block {
+    attr = 1
+    nested_block {
+      attr_nest = 1
+    }
+  }
+}
+
+resource "foo" "b" {
+  attr_new = "x"
+
+  block {
+    attr = 123
+  }
+}
+`),
+				filepath.Join(testdataDir, "resource_attribute", "main2.tf"): []byte(`
+resource "bar" "c" {
+  attr                    = foo.a.attr_new
+  attr_block              = foo.a.block.0.attr
+  attr_block_nested       = foo.a.block.0.nested_block.0.attr_nest
+  attr_multi_block        = foo.a.multi_block.0.attr
+  attr_multi_block_nested = foo.a.multi_block.0.nested_block.attr_nest
+  attr2                   = foo.b.attr_new
+  attr_block2             = foo.b.block.0.attr
+}
+`),
+			},
+		},
+		{
+			name:           "rename top-level block regardless resource name",
+			rootModulePath: filepath.Join(testdataDir, "resource_attribute"),
+			resType:        "foo",
+			resName:        "*",
+			oldAddr:        []string{"block"},
+			newAddr:        []string{"block_new"},
+			expect: map[string][]byte{
+				filepath.Join(testdataDir, "resource_attribute", "main.tf"): []byte(`
+resource "foo" "a" {
+  attr = "x"
+
+  block_new {
+    attr = 123
+    nested_block {
+      attr_nest = 1
+    }
+  }
+
+  multi_block {
+    attr = 1
+    nested_block {
+      attr_nest = 1
+    }
+  }
+
+  multi_block {
+    attr = 1
+    nested_block {
+      attr_nest = 1
+    }
+  }
+}
+
+resource "foo" "b" {
+  attr = "x"
+
+  block_new {
+    attr = 123
+  }
+}
+`),
+				filepath.Join(testdataDir, "resource_attribute", "main2.tf"): []byte(`
+resource "bar" "c" {
+  attr                    = foo.a.attr
+  attr_block              = foo.a.block_new.0.attr
+  attr_block_nested       = foo.a.block_new.0.nested_block.0.attr_nest
+  attr_multi_block        = foo.a.multi_block.0.attr
+  attr_multi_block_nested = foo.a.multi_block.0.nested_block.attr_nest
+  attr2                   = foo.b.attr
+  attr_block2             = foo.b.block_new.0.attr
+}
+`),
+			},
+		},
+		{
+			name:           "rename block nested attribute regardless resource name",
+			rootModulePath: filepath.Join(testdataDir, "resource_attribute"),
+			resType:        "foo",
+			resName:        "*",
+			oldAddr:        []string{"block", "attr"},
+			newAddr:        []string{"block", "attr_new"},
+			expect: map[string][]byte{
+				filepath.Join(testdataDir, "resource_attribute", "main.tf"): []byte(`
+resource "foo" "a" {
+  attr = "x"
+
+  block {
+    attr_new = 123
+    nested_block {
+      attr_nest = 1
+    }
+  }
+
+  multi_block {
+    attr = 1
+    nested_block {
+      attr_nest = 1
+    }
+  }
+
+  multi_block {
+    attr = 1
+    nested_block {
+      attr_nest = 1
+    }
+  }
+}
+
+resource "foo" "b" {
+  attr = "x"
+
+  block {
+    attr_new = 123
+  }
+}
+`),
+				filepath.Join(testdataDir, "resource_attribute", "main2.tf"): []byte(`
+resource "bar" "c" {
+  attr                    = foo.a.attr
+  attr_block              = foo.a.block.0.attr_new
+  attr_block_nested       = foo.a.block.0.nested_block.0.attr_nest
+  attr_multi_block        = foo.a.multi_block.0.attr
+  attr_multi_block_nested = foo.a.multi_block.0.nested_block.attr_nest
+  attr2                   = foo.b.attr
+  attr_block2             = foo.b.block.0.attr_new
 }
 `),
 			},

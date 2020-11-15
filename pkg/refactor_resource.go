@@ -32,6 +32,23 @@ func RefactorReourceAttribute(mc *ModuleConfigs, resType string, resName string,
 	copy(newAddrs[2:], newAddr)
 	return RefactorAttributeInModule(mc, "resource", "", oldAddrs, newAddrs, currentModuleAbsPath,
 		func(mc *ModuleConfigs, label []string) []string {
-			return []string{mc.Get(currentModuleAbsPath).ManagedResources[strings.Join(label, ".")].DeclRange.Filename}
+			resType, resName := label[0], label[1]
+			if resName != "*" {
+				return []string{mc.Get(currentModuleAbsPath).ManagedResources[resType+"."+resName].DeclRange.Filename}
+			}
+			fileset := map[string]interface{}{}
+			for resFqdn, res := range mc.Get(currentModuleAbsPath).ManagedResources {
+				if strings.Split(resFqdn, ".")[0] != resType {
+					continue
+				}
+				fileset[res.DeclRange.Filename] = struct{}{}
+			}
+			files := make([]string, len(fileset))
+			i := 0
+			for fn := range fileset {
+				files[i] = fn
+				i++
+			}
+			return files
 		})
 }
