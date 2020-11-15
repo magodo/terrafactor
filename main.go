@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"os"
 	"path/filepath"
 
 	"github.com/hashicorp/hcl/v2"
@@ -19,10 +20,10 @@ var (
 )
 
 func init() {
-	flagRootModulePath = flag.String("root-module-path", "", "path to root module")
-	flagCurrentModulePath = flag.String("module-path", "", "path to the current module")
-	flagSourceAddr = flag.String("source-addr", "", "the source attribute address resides in the current module that is to refactor")
-	flagDestAttr = flag.String("dest-attr", "", "the destination attribute to rename to")
+	flagRootModulePath = flag.String("path-root-module", ".", "path to root module")
+	flagCurrentModulePath = flag.String("path-module", ".", "path to the current module")
+	flagSourceAddr = flag.String("addr-src", "", "the source attribute address resides in the current module that is to refactor")
+	flagDestAttr = flag.String("addr-dst", "", "the destination attribute to rename to")
 }
 
 // convertTraversal converts the traversal into string slice.
@@ -47,6 +48,11 @@ func convertTraversal(traversal hcl.Traversal) ([]string, error) {
 
 func main() {
 	flag.Parse()
+
+	if *flagSourceAddr == "" || *flagDestAttr == "" {
+		flag.Usage()
+		os.Exit(1)
+	}
 
 	// resolve the paths before we chdir
 	rootModuleAbsPath, err := filepath.Abs(*flagRootModulePath)
