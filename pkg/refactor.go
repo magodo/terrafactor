@@ -66,7 +66,7 @@ func Refactor(rootModuleAbsPath string, sourceAddr []string, destAddr []string, 
 		case 2:
 			moduleSources, err = RefactorResourceName(moduleConfigs, sourceAddr[0], sourceAddr[1], destAddr[1], currentModuleAbsPath)
 		default:
-			moduleSources, err = RefactorReourceAttribute(moduleConfigs, sourceAddr[1], sourceAddr[2], sourceAddr[3:], destAddr[3:], currentModuleAbsPath)
+			moduleSources, err = RefactorReourceAttribute(moduleConfigs, sourceAddr[0], sourceAddr[1], sourceAddr[2:], destAddr[2:], currentModuleAbsPath)
 		}
 	}
 
